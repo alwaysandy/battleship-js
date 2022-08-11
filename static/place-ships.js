@@ -55,25 +55,36 @@ function getRandomLoc(size) {
     };
 }
 
+function checkCollision(x, y, dir, size) {
+    if (dir === 0) {
+        if (x + size > 9) {
+            return true;
+        }
+        for (let i = 0; i < size; i++) {
+            if (board[y][x + i] !== 0) {
+                return true;
+            }
+        }
+    } else {
+        if (y + size > 9) {
+            return true;
+        }
+        for (let i = 0; i < size; i++) {
+            if (board[y + i][x] !== 0) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 function placeShip(size, shipNum) {
     let loc;
     let collision = true;
     while (collision) {
         loc = getRandomLoc(size);
-        collision = false;
-        for (let i = 0; i < size; i++) {
-            if (loc.dir === 0) {
-                if (board[loc.y][loc.x + i] !== 0) {
-                    collision = true;
-                    break;
-                }
-            } else {
-                if (board[loc.y + i][loc.x] !== 0) {
-                    collision = true;
-                    break;
-                }
-            }
-        }
+        collision = checkCollision(loc.x, loc.y, loc.dir, loc.size);
     }
 
     ships.push(loc);
@@ -99,25 +110,8 @@ function placeRandomShips() {
 function moveShip(x, y) {
     let s = ships[selected];
 
-    if (s.dir === 0) {
-        if (s.size + x  - 1> 9) {
-            return;
-        }
-
-        for (let i = 0; i < s.size; i++) {
-            if (board[y][x + i] !== 0) {
-                return;
-            }
-        }
-    } else {
-        if (s.size + y - 1 > 9) {
-            return;
-        }
-        for (let i = 0; i < s.size; i++) {
-            if (board[y + i][x] !== 0) {
-                return;
-            }
-        }
+    if (checkCollision(x, y, s.dir, s.size)) {
+        return;
     }
 
     if (s.dir === 0) {
@@ -139,6 +133,10 @@ function moveShip(x, y) {
     ships[selected].x = x;
     ships[selected].y = y;
     unselectShips();
+}
+
+function rotateShip(x, y) {
+    console.log(x, y);
 }
 
 function unselectShips() {
@@ -170,7 +168,9 @@ function handleClick(t) {
     let y = parseInt(t.target.dataset.y);
 
     if (board[y][x] !== 0) {
-        if (board[y][x] !== selected + 1) {
+        if (board[y][x] === selected + 1) {
+            rotateShip(x, y);
+        } else {
             unselectShips();
             selectShip(x, y);
         }
