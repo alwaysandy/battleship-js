@@ -57,7 +57,7 @@ function getRandomLoc(size) {
 
 function checkCollision(x, y, dir, size) {
     if (dir === 0) {
-        if (x + size > 9) {
+        if (x + size > 10) {
             return true;
         }
         for (let i = 0; i < size; i++) {
@@ -66,7 +66,7 @@ function checkCollision(x, y, dir, size) {
             }
         }
     } else {
-        if (y + size > 9) {
+        if (y + size > 10) {
             return true;
         }
         for (let i = 0; i < size; i++) {
@@ -132,11 +132,42 @@ function moveShip(x, y) {
 
     ships[selected].x = x;
     ships[selected].y = y;
-    unselectShips();
+    selectShip(x, y);
 }
 
-function rotateShip(x, y) {
-    console.log(x, y);
+function rotateShip() {
+    let s = ships[selected];
+    let dir = s.dir === 0 ? 1 : 0;
+    if (dir === 0) {
+        if (checkCollision(s.x + 1, s.y, dir, s.size - 1)) {
+            console.log("can't rotate");
+            return;
+        }
+    } else {
+        if (checkCollision(s.x, s.y + 1, dir, s.size - 1)) {
+            console.log("can't rotate");
+            return;
+        }
+    }
+
+    if (s.dir === 0) {
+        for (let i = 1; i < s.size; i++) {
+            board[s.y][s.x + i] = 0;
+            board[s.y + i][s.x] = selected + 1;
+            boardNodes[s.y][s.x + i].classList.remove('ship');
+            boardNodes[s.y + i][s.x].classList.add('ship');
+        }
+    } else {
+        for (let i = 0; i < s.size; i++) {
+            board[s.y + i][s.x] = 0;
+            board[s.y][s.x + i] = selected + 1;
+            boardNodes[s.y + i][s.x].classList.remove('ship');
+            boardNodes[s.y][s.x + i].classList.add('ship');
+        }
+    }
+
+    ships[selected].dir = s.dir === 0 ? 1 : 0;
+    selectShip(s.x, s.y);
 }
 
 function unselectShips() {
@@ -169,7 +200,7 @@ function handleClick(t) {
 
     if (board[y][x] !== 0) {
         if (board[y][x] === selected + 1) {
-            rotateShip(x, y);
+            rotateShip();
         } else {
             unselectShips();
             selectShip(x, y);
