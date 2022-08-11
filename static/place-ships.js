@@ -61,7 +61,7 @@ function checkCollision(x, y, dir, size) {
             return true;
         }
         for (let i = 0; i < size; i++) {
-            if (board[y][x + i] !== 0) {
+            if (board[y][x + i] !== 0 && board[y][x + i] !== selected + 1) {
                 return true;
             }
         }
@@ -70,7 +70,7 @@ function checkCollision(x, y, dir, size) {
             return true;
         }
         for (let i = 0; i < size; i++) {
-            if (board[y + i][x] !== 0) {
+            if (board[y + i][x] !== 0 && board[y + i][x] !== selected + 1) {
                 return true;
             }
         }
@@ -158,7 +158,7 @@ function rotateShip() {
             boardNodes[s.y + i][s.x].classList.add('ship');
         }
     } else {
-        for (let i = 0; i < s.size; i++) {
+        for (let i = 1; i < s.size; i++) {
             board[s.y + i][s.x] = 0;
             board[s.y][s.x + i] = selected + 1;
             boardNodes[s.y + i][s.x].classList.remove('ship');
@@ -170,14 +170,21 @@ function rotateShip() {
     selectShip(s.x, s.y);
 }
 
-function unselectShips() {
-    let selectedTiles = document.querySelectorAll('.selected');
-    if (selectedTiles) {
-        selectedTiles.forEach((t) => {
-            t.classList.remove('selected');
-            selected = -1;
-        });
+function unselectShip() {
+    if (selected > -1) {
+        let s = ships[selected];
+        if (s.dir === 0) {
+            for (let i = 0; i < s.size; i++) {
+                boardNodes[s.y][s.x + i].classList.remove('selected');
+            }
+        } else {
+            for (let i = 0; i < s.size; i++) {
+                boardNodes[s.y + i][s.x].classList.remove('selected');
+            }
+        }
     }
+
+    selected = -1;
 }
 
 function selectShip(x, y) {
@@ -202,7 +209,7 @@ function handleClick(t) {
         if (board[y][x] === selected + 1) {
             rotateShip();
         } else {
-            unselectShips();
+            unselectShip();
             selectShip(x, y);
         }
     } else if (selected !== -1) {
@@ -213,16 +220,14 @@ function handleClick(t) {
 function ready() {
     const waitingText = document.querySelector('.waiting');
     waitingText.classList.remove('hidden');
-    unselectShips();
+    unselectShip();
     const tiles = document.querySelectorAll('.tile');
     tiles.forEach(t => t.removeEventListener('click', handleClick));
 }
 
 function addEventListeners() {
     const tiles = document.querySelectorAll('.tile');
-    tiles.forEach((t) => {
-        t.addEventListener('click', handleClick);
-    });
+    tiles.forEach(t => t.addEventListener('click', handleClick));
 
     const startButton = document.querySelector('#start');
     startButton.addEventListener('click', () => {
