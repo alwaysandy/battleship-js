@@ -210,10 +210,24 @@ function handleClick(t) {
     }
 }
 
+function ready() {
+    const waitingText = document.querySelector('.waiting');
+    waitingText.classList.remove('hidden');
+    unselectShips();
+    const tiles = document.querySelectorAll('.tile');
+    tiles.forEach(t => t.removeEventListener('click', handleClick));
+}
+
 function addEventListeners() {
     const tiles = document.querySelectorAll('.tile');
     tiles.forEach((t) => {
         t.addEventListener('click', handleClick);
+    });
+
+    const startButton = document.querySelector('#start');
+    startButton.addEventListener('click', () => {
+        startButton.classList.add('hidden');
+        ready();
     });
 }
 
