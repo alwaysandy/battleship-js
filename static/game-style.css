@@ -78,7 +78,7 @@ div.tile.sunk {
     background-color: red;
 }
 
-.result {
+.message {
     margin-top: 15px;
     font-size: 40px;
     font-weight: bold;

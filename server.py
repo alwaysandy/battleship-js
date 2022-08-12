@@ -31,11 +31,9 @@ def on_connect():
 @socketio.on('ready')
 def on_ready(ships):
     if not playerOne["id"]:
-        print(request.sid)
         playerOne["id"] = request.sid
         playerOne["ships"] = ships
     elif not playerTwo["id"]:
-        print(request.sid)
         playerTwo["id"] = request.sid
         playerTwo["ships"] = ships
         pOneId = json.dumps(playerOne["id"])
@@ -67,7 +65,6 @@ def updateID(id):
 
 @socketio.on('shoot')
 def shoot(coords):
-    print("Sending shot")
     if request.sid == playerOne["id"]:
         emit('attack', coords, to=playerTwo["id"])
     else:

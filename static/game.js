@@ -74,14 +74,18 @@ function sink(s, opponent) {
         if (s.dir === 0) {
             if (opponent) {
                 opBoardNodes[s.y][s.x + i].classList.add('sunk');
+                opBoardNodes[s.y][s.x + i].textContent = "";
             } else {
                 playerBoardNodes[s.y][s.x + i].classList.add('sunk');
+                playerBoardNodes[s.y][s.x + i].textContent = "";
             }
         } else {
             if (opponent) {
                 opBoardNodes[s.y + i][s.x].classList.add('sunk');
+                opBoardNodes[s.y + i][s.x].textContent = "";
             } else {
                 playerBoardNodes[s.y + i][s.x].classList.add('sunk');
+                playerBoardNodes[s.y + i][s.x].textContent = "";
             }
         }
     }
@@ -94,7 +98,6 @@ function handleClick(t) {
 
         if (!shots[y][x]) {
             socket.emit('shoot', {'x': x, 'y': y});
-            turn = 1;
         }
     }
 }
@@ -117,6 +120,7 @@ const opBoardNodes = createBoardDiv(true);
 const shots = createShotsDataArray();
 let ships = [];
 let turn;
+const messageNode = document.querySelector('.message');
 
 let socket = io();
 
@@ -125,8 +129,10 @@ socket.on('start_game', (data) => {
     data = JSON.parse(data);
     if (data.turn === data.id) {
         turn = 0;
+        messageNode.textContent = "Your shot";
     } else {
         turn = 1;
+        messageNode.textContent = "Waiting for shot..";
     }
     updateShips(data.ships);
     addEventListeners();
@@ -158,7 +164,7 @@ socket.on('attack', (c) => {
                     if (ships.length == 0) {
                         socket.emit("game_over");
                         clearEventListeners();
-                        document.querySelector('.result').textContent = "You lose!";
+                        messageNode.textContent = "You lose!";
                     }
                     return;
                 }
@@ -167,6 +173,7 @@ socket.on('attack', (c) => {
     }
 
     turn = 0;
+    messageNode.textContent = "Your shot";
     response.hit = 0;
     socket.emit('response', response);
 });
@@ -181,15 +188,17 @@ socket.on('response', (r) => {
             sink(r.ship, true);
         }
         turn = 0;
+        messageNode.textContent = "Your shot";
     } else {
         shots[r.y][r.x] = 1;
         opBoardNodes[r.y][r.x].textContent = "X";
         opBoardNodes[r.y][r.x].classList.add('miss');
+        turn = 1;
+        messageNode.textContent = "Waiting for shot..";
     }
 });
 
 socket.on("game_over", () => {
-    let p = document.querySelector('.result');
-    p.textContent = "You win!";
+    messageNode.textContent = "You win!";
     clearEventListeners();
 });
