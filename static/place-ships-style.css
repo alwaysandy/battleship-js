@@ -49,7 +49,6 @@ button {
 
 .ship {
     background-color: blue;
-    cursor: pointer;
 }
 
 .tile.ship.selected {

@@ -90,10 +90,10 @@ function placeShip(size, shipNum) {
     ships.push(loc);
     for (let i = 0; i < size; i++) {
         if (loc.dir === 0) {
-            boardNodes[loc.y][loc.x + i].classList.add('ship');
+            boardNodes[loc.y][loc.x + i].classList.add('ship', 'pointer');
             board[loc.y][loc.x + i] = shipNum;
         } else {
-            boardNodes[loc.y + i][loc.x].classList.add('ship');
+            boardNodes[loc.y + i][loc.x].classList.add('ship', 'pointer');
             board[loc.y + i][loc.x] = shipNum;
         } 
     }
@@ -222,7 +222,10 @@ function ready() {
     waitingText.classList.remove('hidden');
     unselectShip();
     const tiles = document.querySelectorAll('.tile');
-    tiles.forEach(t => t.removeEventListener('click', handleClick));
+    tiles.forEach(t => {
+        t.removeEventListener('click', handleClick);
+        t.classList.remove('pointer');
+    });
     socket.emit('ready', ships);
 }
 

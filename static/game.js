@@ -1,3 +1,6 @@
+//TODO show missing ships at end
+//TODO allow restarting game
+
 function createBoardDiv(opponent) {
     const container = document.querySelector('.flex-container');
     const boardNode = document.createElement('div');
