@@ -223,6 +223,7 @@ function ready() {
     unselectShip();
     const tiles = document.querySelectorAll('.tile');
     tiles.forEach(t => t.removeEventListener('click', handleClick));
+    socket.emit('ready', ships);
 }
 
 function addEventListeners() {
@@ -240,8 +241,15 @@ const boardNodes = [];
 const board = [];
 const ships = [];
 let selected = -1;
+let socket = io();
 
 createBoardDiv();
 createBoardDataArray();
 placeRandomShips();
 addEventListeners();
+
+socket.on('redirectToGame', (id) => {
+    id = JSON.parse(id);
+    sessionStorage.setItem('id', id);
+    window.location.replace('/game');
+});
