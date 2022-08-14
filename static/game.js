@@ -100,7 +100,7 @@ function handleClick(t) {
         let y = parseInt(t.target.dataset.y);
 
         if (!shots[y][x]) {
-            socket.emit('shoot', {'x': x, 'y': y});
+            socket.emit('sendShot', {'x': x, 'y': y});
         }
     }
 }
@@ -141,7 +141,7 @@ socket.on('start_game', (data) => {
     addEventListeners();
 });
 
-socket.on('attack', (c) => {
+socket.on('receiveShot', (c) => {
     let response = {};
     response.x = c.x;
     response.y = c.y;
@@ -163,7 +163,7 @@ socket.on('attack', (c) => {
                         ships[i].coords.splice(j, 1);
                     }
                     response.hit = 1;
-                    socket.emit('response', response);
+                    socket.emit('shotResponse', response);
                     if (ships.length == 0) {
                         socket.emit("game_over");
                         clearEventListeners();
@@ -178,10 +178,10 @@ socket.on('attack', (c) => {
     turn = 0;
     messageNode.textContent = "Your shot";
     response.hit = 0;
-    socket.emit('response', response);
+    socket.emit('shotResponse', response);
 });
 
-socket.on('response', (r) => {
+socket.on('shotResponse', (r) => {
     if (r.hit === 1) {
         shots[r.y][r.x] = 1;
         opBoardNodes[r.y][r.x].textContent = "X";

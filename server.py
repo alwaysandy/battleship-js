@@ -63,19 +63,19 @@ def updateID(id):
         data = json.dumps(pTwoData)
         emit("start_game", data, to=playerTwo["id"])
 
-@socketio.on('shoot')
+@socketio.on('sendShot')
 def shoot(coords):
     if request.sid == playerOne["id"]:
-        emit('attack', coords, to=playerTwo["id"])
+        emit('receiveShot', coords, to=playerTwo["id"])
     else:
-        emit('attack', coords, to=playerOne["id"])
+        emit('receiveShot', coords, to=playerOne["id"])
 
-@socketio.on('response')
+@socketio.on('shotResponse')
 def send_reponse(r):
     if request.sid == playerOne["id"]:
-        emit('response', r, to=playerTwo["id"])
+        emit('shotResponse', r, to=playerTwo["id"])
     else:
-        emit('response', r, to=playerOne["id"])
+        emit('shotResponse', r, to=playerOne["id"])
         
 
 @socketio.on('disconnect')
