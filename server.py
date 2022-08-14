@@ -89,5 +89,12 @@ def game_over():
     else:
         emit("game_over", to=playerOne["id"])
 
+@socketio.on('sendMissedShips')
+def sendMissedShips(ships):
+    if request.sid == playerOne["id"]:
+        emit("receiveMissedShips", ships, to=playerTwo["id"])
+    else:
+        emit("receiveMissedShips", ships, to=playerOne["id"])
+
 if __name__ == '__main__':
     socketio.run(app)

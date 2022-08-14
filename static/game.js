@@ -204,4 +204,25 @@ socket.on('shotResponse', (r) => {
 socket.on("game_over", () => {
     messageNode.textContent = "You win!";
     clearEventListeners();
+    socket.emit("sendMissedShips", ships);
+});
+
+socket.on("receiveMissedShips", (ships) => {
+    for (let s of ships) {
+        if (s.dir === 0) {
+            for (let i = 0; i < s.size; i++) {
+                if (opBoardNodes[s.y][s.x].classList.contains('sunk')) {
+                    break;
+                }
+                opBoardNodes[s.y][s.x + i].classList.add('missed');
+            }
+        } else {
+            for (let i = 0; i < s.size; i++) {
+                if (opBoardNodes[s.y][s.x].classList.contains('sunk')) {
+                    break;
+                }
+                opBoardNodes[s.y + i][s.x].classList.add('missed');
+            }
+        }
+    }
 });

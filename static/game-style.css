@@ -83,3 +83,7 @@ div.tile.sunk {
     font-size: 40px;
     font-weight: bold;
 }
+
+.missed {
+    background-color: #76bbff;
+}
