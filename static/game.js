@@ -108,6 +108,8 @@ function handleClick(t) {
 function addEventListeners() {
     const opTiles = document.querySelectorAll('.op-tile');
     opTiles.forEach(tile => tile.addEventListener('click', handleClick));
+    const restartGame = document.querySelector('#restart-game-button');
+    restartGame.addEventListener('click', () => socket.emit("restart_game")); 
 }
 
 function clearEventListeners() {
@@ -211,18 +213,17 @@ socket.on("receiveMissedShips", (ships) => {
     for (let s of ships) {
         if (s.dir === 0) {
             for (let i = 0; i < s.size; i++) {
-                if (opBoardNodes[s.y][s.x].classList.contains('sunk')) {
-                    break;
-                }
                 opBoardNodes[s.y][s.x + i].classList.add('missed');
             }
         } else {
             for (let i = 0; i < s.size; i++) {
-                if (opBoardNodes[s.y][s.x].classList.contains('sunk')) {
-                    break;
-                }
                 opBoardNodes[s.y + i][s.x].classList.add('missed');
             }
         }
     }
+});
+
+socket.on("restart_game", () => {
+    alert("Game restarting..");
+    window.location.replace("/");
 });

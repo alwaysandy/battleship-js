@@ -96,5 +96,13 @@ def sendMissedShips(ships):
     else:
         emit("receiveMissedShips", ships, to=playerOne["id"])
 
+@socketio.on('restart_game')
+def clearGameInfo():
+    emit("restart_game", broadcast=True)
+    playerOne["id"] = None
+    playerOne["ships"] = None
+    playerTwo["id"] = None
+    playerTwo["ships"] = None
+
 if __name__ == '__main__':
     socketio.run(app)
